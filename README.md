@@ -79,7 +79,7 @@
 - **Some of this information is out of date being based on an older version of the file.**
 
 1. **Navigate to the Mining Page**:
-- Go to `https://www.pond0x.com/mining`.
+- Go to `https://www.pond0x.com/mining` directly by bookmark or entering the url. If you travel to the mining page via the Pond0x.com home page first you will need to refresh the page to load in the control panel and summary box.
 2. **Control Panel**:
 - A control panel will appear in the top-right corner of the page.
 - **Mode Toggle**: Switch between “Auto” (default) and “Manual” modes.
@@ -102,7 +102,7 @@
 ### Swapping on Pond0x
 
 1. **Navigate to the Swap Page**:
-- Go to `https://www.pond0x.com/swap/solana`.
+- Go to `https://www.pond0x.com/swap/solana`directly by bookmark or entering the url. If you travel to the solana swap page via the Pond0x.com home page first you will need to refresh the page to load in the control panel.
 2. **Control Panel**:
 - A control panel will appear below the swap button.
 - **Mode Toggle**: Switch between “Auto” (default) and “Referral” modes.
