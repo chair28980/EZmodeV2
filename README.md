@@ -65,10 +65,10 @@
 
 - Open Chrome and go to `chrome://extensions/`.
 - Enable “Developer mode” (toggle in the top-right corner).
-- Click “Load unpacked” and select the `ez-mode` folder you cloned.
+- Click “Load unpacked” and select the `EZmodeV2-main` folder you cloned.
 
 2. **Verify Installation**:
-- You should see the “Ez Mode” extension listed with the bear icon (as shown in the manifest: `icon48.png` and `icon128.png`).
+- You should see the “EzmodeV2” extension listed with the swapping lotus icon (as shown in the manifest: `icon48.png` and `icon128.png`).
 - The extension will automatically activate when you visit `https://www.pond0x.com/mining` or `https://www.pond0x.com/swap/solana`.
 
 -----
