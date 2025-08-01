@@ -1,8 +1,8 @@
 {
     "manifest_version": 3,
-    "name": "Ez Mode",
+    "name": "Ez ModeV2",
     "version": "4.2.0.693",
-    "description": "Automates mining on Pond0x",
+    "description": "Automates Participation on Pond0x",
     "permissions": [
         "storage",
         "notifications",
