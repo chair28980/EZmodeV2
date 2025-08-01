@@ -160,7 +160,7 @@ ez-mode/
 - Edit the JavaScript files (`background.js`, `content_autominer.js`, `content_autoswapper.js`) as needed.
 - Update the `manifest.json` if you add new permissions or content scripts.
 2. **Reload Extension**:
-- Go to `chrome://extensions/`, find “Ez ModeV2,” and click “Reload.”
+- Go to `chrome://extensions/`, find “EzmodeV2,” and click “Reload.”
 3. **Test**:
 - Visit `https://www.pond0x.com/mining` and `https://www.pond0x.com/swap/solana` to test the automation features.
 - Check the console logs (`Ctrl+Shift+J`) for debugging.
