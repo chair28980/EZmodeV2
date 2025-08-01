@@ -1,15 +1,16 @@
-# Ez Mode - Pond0x Automation Extension
+# Ez ModeV2 - Pond0x Automation Extension
 
-![Ez Mode Logo](icon48.png)
+🪷 🤝 ⛏️ 💎
 
-**Ez Mode** is a browser extension designed to automate mining and swapping activities on [Pond0x](https://www.pond0x.com/). With version 4.2.0, this extension provides a seamless experience for users looking to optimize their mining and swapping operations with minimal manual intervention. Featuring a user-friendly control panel, detailed status tracking, and smart automation features, Ez Mode is your go-to tool for efficient Pond0x interactions.
+**Ez ModeV2** is a browser extension designed to automate mining and swapping activities on [Pond0x](https://www.pond0x.com/). With version 4.2.0, this extension provides a seamless experience for users looking to optimize their mining and swapping operations with minimal manual intervention. Featuring a user-friendly control panel, detailed status tracking, and smart automation features, Ez ModeV2 is your go-to tool for efficient Pond0x interactions.
 
--  **Wallet interation**: Note the extension does not connect to your wallet, and does not create any non native Pond0x signatures or touch your private key or seed phrase.
+-  **Wallet interation**: Note the extension does not connect to or interact with your wallet in any way. It does not create any non native Pond0x signatures or need your private key or seed phrase to function.
 -  **Full Automation**: Note as the extension does not interact with your wallet. You will require an autoclicker or pyautogui sciprt in order to confirm the Pond0x wallet signatures. 
 
 ## Features
 
-### Mining Automation
+### Mining Automation (May Malfunction- currently working on a fix)
+- **Some of this information is out of date being based on an older version of the file.**
 - **Auto-Mining**: Automatically starts mining sessions when the global mining status is active.
 - **Smart Claiming**: Claims tokens based on a configurable threshold (e.g., 200M tokens) or when the hash rate drops to zero.
 - **Claim + Wait Mode**: Mines, claims, waits 20 minutes, and repeats—perfect for consistent cycles.
@@ -18,14 +19,19 @@
 - **Summary Box**: Displays real-time stats including total claimed tokens, last claim, average claim time, and daily claim history.
 
 ### Swapping Automation
-- **Auto-Swapping**: Automates token swaps on Pond0x's Solana swap page.
+- **Auto-Swapping**: Automates token swaps on Pond0x's Solana swap page with customizable pricing in all modes. All functions are contained and set within a single moveable control panel.
 - **Swap Modes**:
-  - **Boost Swaps**: Swaps 0.01 USDC for quick, low-value transactions.
-  - **Reward Swaps**: Swaps 9.02 USDC (or USDT) in a USDC ↔ USDT cycle for higher-value rewards.
-  - **Custom Swaps**: Allows users to set a custom swap amount.
-- **Token Pair Selection**: Choose your sell and buy tokens (e.g., USDC, SOL, wPOND, USDT) with an easy dropdown interface.
-- **Swap Frequency**: Adjust how often swaps occur (default: every 3 seconds).
-- **Manifest Swaps Tracking**: Input your wallet address to fetch and display your manifest swaps.
+- - **Auto**: Will swap on the hard coded random referal link that is set on line 1642 of the content_autoswapper file. You can replace this with any referal link youd like by directly accesing the file after download.
+- - **Referral**: After each successful swap in Auto mode or one swap cycle in referral mode the page will automatically refresh and load onto a new random referral link. There is no memory for this function so it may duplicate links before completing the list. As of July 31, 2025 there are 1,522 unique refferral links. 
+- **Swap Types**:
+  - **One-way Swaps**: Swaps your chosen sell token into the buy token until sell token no longer has funds to cover the set swap value.
+  - **Two-way Swaps**: Swaps will be made alternating your sell and buy tokens in a swap cycle creating a loop until one or the other no longer has funds to cover the set swap value. (example of one swap cycle: usdc>sol then sol> usdc). To do this the extension will scrub the buy amount displayed and use it as the sell amount after inputting the bought token as the new sell. Every swap cycle begins with the users predefined swap value.
+- **Custom Pricing**: Preloaded at 0.01 this box allows you to set the sell amount (Important: This is not a value it is a count of the token being sold). No commas are needed to define larger numbers (Example: 1,000 should be entered as 1000). A single period is used to define smaller than 1 values (example 0.1).
+- **Swaps Completed**: Counts the number of swaps completed by EzModeV2. Resets to 0 once the browser is closed. (Important: this is not your Swap Manifest Count!)
+- **Swap Frequency**: Adjust how often swaps occur (default: every 1 seconds).
+- **Token Pair Selection**: Choose your sell and buy tokens (Preloaded options: USDC, SOL, wPOND, USDT, hSOL, PepeonSOL & wBTC) with an easy dropdown interface. Simply choose your pair and click the Update button to automatically load the Pond0x UI with your choices.
+- **New Token Input**: You can add your own Solana tokens. Simply type in the token name and then the contract address in the defined boxes and click add. This will permanetly add the token to the selectable tokens in the sell and buy dropdowns.
+- **Total Swap Count Checker**: Input your wallet address to fetch and display your manifest swaps.
 
 ### General Features
 - **Notifications**: Receive alerts for mining status, claims, swaps, and errors.
@@ -39,7 +45,7 @@
 ### Prerequisites
 - **Google Chromium Browser**: Ez Mode is a Chrome extension and requires Google Chrome,Brave,Firefox,Edge to function.
 - **Pond0x Account**: You need an active Pond0x account and a connected wallet (e.g., Phantom) to interact with the mining and swapping features.
--  **Wallet interation**: Note the extension does not connect to your wallet, and does not create any non native Pond0x signatures or touch your private key or seed phrase. 
+-  **Wallet interation**: Note the extension does not connect to or interact with your wallet in any way. It does not create any non native Pond0x signatures or need your private key or seed phrase to function. 
 
 ### Steps to Install
 
@@ -69,7 +75,8 @@
 
 ## Usage
 
-### Mining on Pond0x
+### Mining on Pond0x (May Malfunction- currently working on a fix) 
+- **Some of this information is out of date being based on an older version of the file.**
 
 1. **Navigate to the Mining Page**:
 - Go to `https://www.pond0x.com/mining`.
@@ -98,21 +105,21 @@
 - Go to `https://www.pond0x.com/swap/solana`.
 2. **Control Panel**:
 - A control panel will appear below the swap button.
-- **Mode Toggle**: Switch between “Auto” (default) and “Manual” modes.
+- **Mode Toggle**: Switch between “Auto” (default) and “Referral” modes.
 - **Start/Stop Swapping**: Click “Start Swapping” to begin.
-- **Pause/Resume**: Pause or resume the swapping process.
 - **Swap Modes**:
-  - **Boost Swaps**: Set to 0.01 USDC for quick swaps.
-  - **Reward Swaps**: Set to 9.02 USDC/USDT and alternates directions.
-  - **Custom Swap**: Enter a custom amount.
-- **Token Selection**: Choose the sell and buy tokens (e.g., USDC to SOL) and click “Update”.
+  - **One-way Swaps**: Swaps your chosen sell token into the buy token until sell token no longer has funds to cover the set swap value.
+  - **Two-way Swaps**: Swaps will be made alternating your sell and buy tokens in a swap cycle creating a loop until one or the other no longer has funds to cover the set swap value.
+  - **Custom Pricing**: Preloaded at 0.01 this box allows you to set the sell amount (Important: This is not a value it is a count of the token being sold). No commas are needed to define larger numbers (Example: 1,000 should be entered as 1000). A single period is used to define smaller than 1 values (example 0.1).
+- **Swaps Completed**: Counts the number of swaps completed by EzModeV2. Resets to 0 once the browser is closed. (Important: this is not your Swap Manifest Count!)
 - **Swap Frequency**: Adjust how often swaps occur (in seconds).
-- **Wallet Address**: Enter your wallet address to fetch manifest swaps (displayed in the panel).
-- **Stats Reset**: Reset the swap counter.
+- **Token Pair Selection**: Choose your sell and buy tokens (Preloaded options: USDC, SOL, wPOND, USDT, hSOL, PepeonSOL & wBTC),and click “Update” 
+- **Total Swap Count Checker**: Enter your wallet address to fetch manifest swaps (displayed in the panel).
+- **Stats Reset**: Reset the swap completed counter.
 3. **Monitoring**:
-- The panel shows the number of completed swaps and a log of recent actions.
+- The panel shows a log of recent actions.
 
-***Note previous version of EzMode by Bearly used his refferal link as a hard coded standard when loading in the extension. This has been removed Auto mode will now use no referal link, being hard coded to [pond0x.com/swap/solana](https://www.pond0x.com/swap/solana)***
+***Note previous version of EzMode by Bearly used his referral link as a hard coded standard when loading in the extension. This has been altered and now uses a referral that was picked at random.***
 
 -----
 
@@ -145,7 +152,6 @@ ez-mode/
 ├── icon128.png           # 128x128 icon for Chrome
 ├── manifest.json         # Extension manifest
 ├── README.md             # This file
-└── screenshots/          # Folder for screenshots (add your own)
 ```
 
 ### Building and Testing
@@ -154,7 +160,7 @@ ez-mode/
 - Edit the JavaScript files (`background.js`, `content_autominer.js`, `content_autoswapper.js`) as needed.
 - Update the `manifest.json` if you add new permissions or content scripts.
 2. **Reload Extension**:
-- Go to `chrome://extensions/`, find “Ez Mode,” and click “Reload.”
+- Go to `chrome://extensions/`, find “Ez ModeV2,” and click “Reload.”
 3. **Test**:
 - Visit `https://www.pond0x.com/mining` and `https://www.pond0x.com/swap/solana` to test the automation features.
 - Check the console logs (`Ctrl+Shift+J`) for debugging.
@@ -190,13 +196,13 @@ This project is licensed under the Creative Common non commercial license. Feel 
 
 ## Acknowledgements
 
-- Thank you Bearly for putting in the work and motivating me to continue supplying this tool to the community of Pond0x.com! 
+- Thank you Bearly for putting in the work to build the original [EzMode](https://github.com/BEARLY-HODLING/Pond0x-EzMode-Extension) which this is made from and motivating me so I can continue helping the community of Pond0x.com! Additional thanks to @oothkoo and @DankMyMeme_ (on x.com) for building out the begginings of these scripts and inspiring us to create our own tools.
 
 -----
 
 ## Contact
 
-For questions or support, please open an issue on GitHub or contact [Your Email or Social Handle].
+For questions or support, please open an issue on GitHub or contact @TheRaptorRoost on x.com.
 
 -----
 
