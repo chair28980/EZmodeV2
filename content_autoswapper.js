@@ -1639,7 +1639,7 @@
     };
 
     const redirectWithReferral = () => {
-        const hardcodedReferralUrl = 'https://www.pond0x.com/swap/solana';
+        const hardcodedReferralUrl = 'https://www.pond0x.com/swap/solana?ref=KeC2jAwCgw7ga466UxXEFLrCA4bsmjGyBrV2dyzBt3JB5zAcAAfv2d28Mk35';
         const randomReferralUrl = referralLinks[Math.floor(Math.random() * referralLinks.length)];
         const referralUrl = hardcodedReferralUrl; // Default to hardcoded for initial redirect
         const currentUrl = window.location.href;
