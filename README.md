@@ -22,7 +22,7 @@
 - **Auto-Swapping**: Automates token swaps on Pond0x's Solana swap page with customizable pricing in all modes. All functions are contained and set within a single moveable control panel.
 - **Swap Modes**:
 - - **Auto**: Will swap on the hard coded random referal link that is set on line 1642 of the content_autoswapper file. You can replace this with any referal link youd like by directly accesing the file after download.
-- - **Referral**: After each successful swap in Auto mode or one swap cycle in referral mode the page will automatically refresh and load onto a new random referral link. There is no memory for this function so it may duplicate links before completing the list. As of July 31, 2025 there are 1,522 unique refferral links. 
+- - **Referral**: After each successful swap One-way or a swap cycle in Two-way modes the page will automatically refresh and load a new random referral link. There is no memory for this function so it may duplicate links before completing the list. As of July 31, 2025 there are 1,522 unique refferral links. 
 - **Swap Types**:
   - **One-way Swaps**: Swaps your chosen sell token into the buy token until sell token no longer has funds to cover the set swap value.
   - **Two-way Swaps**: Swaps will be made alternating your sell and buy tokens in a swap cycle creating a loop until one or the other no longer has funds to cover the set swap value. (example of one swap cycle: usdc>sol then sol> usdc). To do this the extension will scrub the buy amount displayed and use it as the sell amount after inputting the bought token as the new sell. Every swap cycle begins with the users predefined swap value.
