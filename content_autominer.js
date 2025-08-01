@@ -1697,7 +1697,7 @@ const createSummaryBoxNow = (container) => {
 
             summaryBox.innerHTML = `
                 <div style="font-weight: bold; background: rgba(0, 0, 0, 0.5); padding: 5px; border-radius: 5px; margin-bottom: 10px; text-align: center;">
-                    Ez Mode - v4.2.0 🐻 ⛏️💧
+                    Ez Miner 🪷 ⛏️
                 </div>
                 <div style="margin-bottom: 10px;">
                     <strong>Date:</strong> ${dateString}<br>
@@ -1783,7 +1783,7 @@ const createSummaryBoxNow = (container) => {
 
             box.innerHTML = `
                 <div style="font-weight: bold; background: rgba(0, 0, 0, 0.5); padding: 5px; border-radius: 5px; margin-bottom: 10px; text-align: center;">
-                    Ez Mode - v4.2.0 🐻 ⛏️💧
+                    Ez Miner 🪷 ⛏️ 
                 </div>
                 <div style="margin-bottom: 10px;">
                     <strong>Date:</strong> ${dateString}<br>
