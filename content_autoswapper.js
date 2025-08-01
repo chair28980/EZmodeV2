@@ -1780,7 +1780,7 @@
                         ${isReferralMode ? 'Referral' : 'Auto'}
                     </span>
                 </div>
-                <span style="position: absolute; left: 50%; transform: translateX(-50%); font-size: 12px;">Ez Mode-v4.2.0 🐻🤝💧</span>
+                <span style="position: absolute; left: 50%; transform: translateX(-50%); font-size: 12px;">Ez Swapper 🪷 🤝</span>
                 <div style="visibility: hidden; display: flex; align-items: center;">
                     <span style="padding: 2px 6px; border-radius: 3px; font-size: 11px;">${isReferralMode ? 'Referral' : 'Auto'}</span>
                 </div>
