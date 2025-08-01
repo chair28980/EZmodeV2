@@ -3201,7 +3201,26 @@ async function setupTokensAndAmount() {
 
     try {
         console.log(`${lh} - Setting up tokens: Sell=${selectedSellToken}, Buy=${selectedBuyToken} at ${new Date().toISOString()}...`);
-        const dropdowns = document.querySelectorAll('form button.rounded-full.flex.items-center');
+        // Wait for dropdowns to ensure they are fully loaded
+        const dropdowns = await new Promise(resolve => {
+            let attempts = 0;
+            const maxAttempts = 15;
+            const check = () => {
+                const dropdowns = document.querySelectorAll('form button.rounded-full.flex.items-center');
+                if (dropdowns.length >= 2 && Array.from(dropdowns).every(d => d.offsetWidth > 0 && d.offsetHeight > 0)) {
+                    console.log(`${lh} - Found ${dropdowns.length} dropdowns after ${attempts * 1000}ms`);
+                    resolve(dropdowns);
+                } else if (attempts >= maxAttempts) {
+                    console.error(`${lh} - Dropdowns not found after ${maxAttempts * 1000}ms`);
+                    resolve([]);
+                } else {
+                    attempts++;
+                    setTimeout(check, 1000);
+                }
+            };
+            check();
+        });
+
         if (dropdowns.length < 2) {
             console.error(`${lh} - Less than two dropdowns found for token selection.`);
             notifyUser('Pond0x Warning', 'Token selection dropdowns not found.');
@@ -3210,13 +3229,11 @@ async function setupTokensAndAmount() {
             return false;
         }
 
-        const sellToken = TOKEN_CONFIG[selectedSellToken.toUpperCase()] || TOKEN_CONFIG[selectedSellToken];
-        const buyToken = TOKEN_CONFIG[selectedBuyToken.toUpperCase()] || TOKEN_CONFIG[selectedBuyToken];
-        console.log(`${lh} - Token config for Sell=${selectedSellToken}:`, sellToken);
-        console.log(`${lh} - Token config for Buy=${selectedBuyToken}:`, buyToken);
+        const sellToken = TOKEN_CONFIG[selectedSellToken.toUpperCase()];
+        const buyToken = TOKEN_CONFIG[selectedBuyToken.toUpperCase()];
         if (!sellToken || !buyToken || !sellToken.address || !buyToken.address) {
-            console.error(`${lh} - Invalid token configuration: Sell=${selectedSellToken}, Buy=${selectedBuyToken}, Sell Config=${JSON.stringify(sellToken)}, Buy Config=${JSON.stringify(buyToken)}`);
-            notifyUser('Pond0x Error', 'Invalid token configuration. Check token addresses.');
+            console.error(`${lh} - Invalid token configuration: Sell=${selectedSellToken}, Buy=${selectedBuyToken}`);
+            notifyUser('Pond0x Error', 'Invalid token configuration.');
             updateLog('Invalid tokens');
             isSettingUp = false;
             return false;
@@ -3225,30 +3242,28 @@ async function setupTokensAndAmount() {
         const selectTokenOption = async (tokenName, isSellToken) => {
             const tokenKey = tokenName.toUpperCase();
             const tokenConfig = TOKEN_CONFIG[tokenKey];
-            if (!tokenConfig || !tokenConfig.address) {
-                console.error(`${lh} - No valid configuration for token ${tokenName} (key: ${tokenKey}), config: ${JSON.stringify(tokenConfig)}`);
-                notifyUser('Pond0x Error', `No valid configuration for token ${tokenName}.`);
-                updateLog(`Invalid config for ${tokenName}`);
-                return false;
-            }
-            let attempts = 0;
-            const maxAttempts = 5;
-            const delay = 500;
-
             const dropdown = isSellToken ? dropdowns[0] : dropdowns[1];
-            if (!dropdown || dropdown.offsetWidth === 0 || dropdown.offsetHeight === 0) {
-                console.error(`${lh} - ${isSellToken ? 'Top' : 'Bottom'} dropdown not found or not visible.`);
-                notifyUser('Pond0x Warning', `${isSellToken ? 'Sell' : 'Buy'} dropdown not found.`);
-                updateLog(`${isSellToken ? 'Sell' : 'Buy'} dropdown missing`);
-                return false;
-            }
-
-            console.log(`${lh} - Clicking ${isSellToken ? 'top' : 'bottom'} dropdown for ${tokenName}...`);
-            updateLog(`${isSellToken ? 'Sell' : 'Buy'}: ${tokenName}`);
+            console.log(`${lh} - Clicking ${isSellToken ? 'sell' : 'buy'} dropdown for ${tokenName}...`);
             dropdown.click();
-            await new Promise(resolve => setTimeout(resolve, 500));
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Increased delay
 
-            let searchBar = document.querySelector('input[placeholder="Search"]');
+            const searchBar = await new Promise(resolve => {
+                let attempts = 0;
+                const maxAttempts = 10;
+                const check = () => {
+                    const searchBar = document.querySelector('input[placeholder="Search"]');
+                    if (searchBar && searchBar.offsetWidth > 0 && searchBar.offsetHeight > 0) {
+                        resolve(searchBar);
+                    } else if (attempts >= maxAttempts) {
+                        resolve(null);
+                    } else {
+                        attempts++;
+                        setTimeout(check, 1000);
+                    }
+                };
+                check();
+            });
+
             if (!searchBar) {
                 console.error(`${lh} - Search bar not found for ${tokenName}.`);
                 notifyUser('Pond0x Warning', `Search bar not found for ${tokenName}.`);
@@ -3256,30 +3271,37 @@ async function setupTokensAndAmount() {
                 return false;
             }
 
-            console.log(`${lh} - Found search bar, inputting ${tokenName} address: ${tokenConfig.address}...`);
+            console.log(`${lh} - Inputting ${tokenName} address: ${tokenConfig.address}`);
             searchBar.focus();
             searchBar.value = '';
             await new Promise(resolve => setTimeout(resolve, 200));
             searchBar.value = tokenConfig.address;
             searchBar.dispatchEvent(new Event('input', { bubbles: true }));
             searchBar.dispatchEvent(new Event('change', { bubbles: true }));
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            await new Promise(resolve => setTimeout(resolve, 1500)); // Increased delay
+
+            let attempts = 0;
+            const maxAttempts = 10;
+            const delay = 1000;
 
             while (attempts < maxAttempts) {
                 let tokenOption = null;
                 const selectors = [
                     tokenConfig.descriptionSelector,
                     'p.text-xs.text-left.text-gray-500.dark\\:text-white-35.truncate',
-                    'p.text-sm.font-medium.text-white.truncate'
+                    'p.text-sm.font-medium.text-white.truncate',
+                    'p.text-xs.text-white', // Fallback
+                    'span.text-sm.text-white' // Fallback
                 ];
 
                 for (const selector of selectors) {
                     const pElements = document.querySelectorAll(selector);
                     for (let p of pElements) {
-                        const text = p.textContent.trim();
-                        if (text === tokenConfig.descriptionText || text.includes(tokenConfig.name)) {
+                        const text = p.textContent.trim().toLowerCase();
+                        const expectedText = (tokenConfig.descriptionText || tokenConfig.name).toLowerCase();
+                        if (text === expectedText || text.includes(tokenConfig.name.toLowerCase()) || (tokenName === 'SOL' && text.includes('wrapped sol'))) {
                             tokenOption = p.closest('button') || p.closest('div') || p.closest('li');
-                            console.log(`${lh} - Found p element for ${tokenName} with text: "${text}", parent: ${tokenOption?.tagName}, HTML: ${p.outerHTML}`);
+                            console.log(`${lh} - Found ${tokenName} option with text: "${text}", selector: ${selector}`);
                             break;
                         }
                     }
@@ -3287,96 +3309,79 @@ async function setupTokensAndAmount() {
                 }
 
                 if (!tokenOption) {
-                    const imgOption = document.querySelector(`img[alt*="${tokenName}"]`)?.closest('button') ||
-                                     document.querySelector(`img[alt*="${tokenName}"]`)?.closest('div') ||
-                                     document.querySelector(`img[alt*="${tokenName}"]`)?.closest('li');
+                    const imgOption = document.querySelector(`img[alt*="${tokenName}"], img[alt*="${tokenConfig.descriptionText}"], img[alt*="Wrapped SOL"]`)?.closest('button') ||
+                                     document.querySelector(`img[alt*="${tokenName}"], img[alt*="${tokenConfig.descriptionText}"], img[alt*="Wrapped SOL"]`)?.closest('div') ||
+                                     document.querySelector(`img[alt*="${tokenName}"], img[alt*="${tokenConfig.descriptionText}"], img[alt*="Wrapped SOL"]`)?.closest('li');
                     if (imgOption) {
                         tokenOption = imgOption;
-                        console.log(`${lh} - Found img element for ${tokenName}, parent: ${tokenOption?.tagName}, HTML: ${document.querySelector(`img[alt*="${tokenName}"]`)?.outerHTML}`);
+                        console.log(`${lh} - Found ${tokenName} via img alt attribute.`);
                     }
                 }
-
-                console.log(`${lh} - Attempt ${attempts + 1}/${maxAttempts}: Found token elements for ${tokenName}`);
 
                 if (tokenOption) {
-                    const clickableElement = tokenOption.querySelector('button') || tokenOption.querySelector('div') || tokenOption;
-                    if (clickableElement) {
-                        try {
-                            clickableElement.click();
-                        } catch (e) {
-                            console.warn(`${lh} - Standard click failed for ${tokenName}, attempting MouseEvent dispatch...`);
-                            const clickEvent = new MouseEvent('click', {
-                                bubbles: true,
-                                cancelable: true,
-                                view: window
-                            });
-                            clickableElement.dispatchEvent(clickEvent);
-                        }
-                        await new Promise(resolve => setTimeout(resolve, 500));
-
-                        const verifySelection = () => {
-                            return new Promise((resolve) => {
-                                let verifyAttempts = 0;
-                                const maxVerifyAttempts = 5;
-                                const check = () => {
-                                    const dropdownButton = isSellToken ? dropdowns[0] : dropdowns[1];
-                                    const textContent = dropdownButton.textContent.trim();
-                                    const dropdownHTML = dropdownButton.outerHTML;
-                                    console.log(`${lh} - Verification attempt ${verifyAttempts + 1}/${maxVerifyAttempts}: Text content: "${textContent}", HTML: ${dropdownHTML}`);
-                                    const isVisuallySelected = textContent.includes(tokenName) || 
-                                                              (tokenConfig.descriptionText && textContent.includes(tokenConfig.descriptionText)) ||
-                                                              textContent.includes(tokenConfig.name) ||
-                                                              dropdownHTML.includes(tokenConfig.address);
-                                    const isPlaceholderAbsent = !textContent.includes('Select Token');
-                                    const isSelected = isVisuallySelected && isPlaceholderAbsent;
-                                    if (isSelected || verifyAttempts >= maxVerifyAttempts) {
-                                        if (!isSelected) {
-                                            console.warn(`${lh} - Verification failed for ${tokenName} after ${maxVerifyAttempts} attempts. Assuming success due to visual indication.`);
-                                            resolve(true); // Allow fallback to true if visually selected
-                                        } else {
-                                            console.log(`${lh} - Successfully verified ${tokenName} selection.`);
-                                            resolve(true);
-                                        }
-                                    } else {
-                                        verifyAttempts++;
-                                        setTimeout(check, 200);
-                                    }
-                                };
-                                setTimeout(check, 200);
-                            });
-                        };
-
-                        const isSelected = await verifySelection();
-                        if (isSelected) {
-                            console.log(`${lh} - Successfully selected ${tokenName} after click.`);
-                            updateLog(`${tokenName} selected`);
-                            return true;
-                        } else {
-                            console.warn(`${lh} - ${tokenName} click did not result in selection, retrying...`);
-                        }
-                    } else {
-                        console.warn(`${lh} - No clickable element found for ${tokenName}, retrying...`);
+                    try {
+                        tokenOption.click();
+                    } catch (e) {
+                        console.warn(`${lh} - Standard click failed for ${tokenName}, dispatching MouseEvent...`);
+                        const clickEvent = new MouseEvent('click', { bubbles: true, cancelable: true, view: window });
+                        tokenOption.dispatchEvent(clickEvent);
                     }
+                    await new Promise(resolve => setTimeout(resolve, 1000)); // Increased delay
+
+                    const verifySelection = () => {
+                        return new Promise(resolve => {
+                            let verifyAttempts = 0;
+                            const maxVerifyAttempts = 10;
+                            const check = () => {
+                                const dropdownButton = isSellToken ? dropdowns[0] : dropdowns[1];
+                                const textContent = dropdownButton.textContent.trim().toLowerCase();
+                                const dropdownHTML = dropdownButton.outerHTML;
+                                console.log(`${lh} - Verifying ${tokenName}: Text="${textContent}", HTML=${dropdownHTML.slice(0, 100)}`);
+                                const isVisuallySelected = textContent.includes(tokenName.toLowerCase()) ||
+                                    (tokenConfig.descriptionText && textContent.includes(tokenConfig.descriptionText.toLowerCase())) ||
+                                    textContent.includes(tokenConfig.name.toLowerCase()) ||
+                                    dropdownHTML.includes(tokenConfig.address) ||
+                                    (tokenName === 'SOL' && textContent.includes('wrapped sol'));
+                                const isPlaceholderAbsent = !textContent.includes('select token');
+                                const isSelected = isVisuallySelected && isPlaceholderAbsent;
+                                if (isSelected || verifyAttempts >= maxVerifyAttempts) {
+                                    console.log(`${lh} - Verification for ${tokenName}: ${isSelected ? 'Success' : 'Failed (max attempts reached)'}`);
+                                    resolve(isSelected);
+                                } else {
+                                    verifyAttempts++;
+                                    setTimeout(check, 500);
+                                }
+                            };
+                            setTimeout(check, 500);
+                        });
+                    };
+
+                    const isSelected = await verifySelection();
+                    if (isSelected) {
+                        console.log(`${lh} - Successfully confirmed ${tokenName} selection.`);
+                        updateLog(`${tokenName} selected`);
+                        return true;
+                    }
+                    console.warn(`${lh} - ${tokenName} not confirmed, retrying...`);
                 } else {
-                    console.warn(`${lh} - ${tokenName} option not found (attempt ${attempts + 1}/${maxAttempts}). Retrying...`);
+                    console.warn(`${lh} - ${tokenName} option not found (attempt ${attempts + 1}/${maxAttempts}).`);
                 }
-                await new Promise(resolve => setTimeout(resolve, delay));
                 attempts++;
+                await new Promise(resolve => setTimeout(resolve, delay));
                 if (attempts < maxAttempts) {
-                    const dropdown = isSellToken ? dropdowns[0] : dropdowns[1];
                     dropdown.click();
-                    await new Promise(resolve => setTimeout(resolve, 500));
-                    searchBar = document.querySelector('input[placeholder="Search"]');
-                    if (searchBar) {
-                        searchBar.value = tokenConfig.address;
-                        searchBar.dispatchEvent(new Event('input', { bubbles: true }));
-                        searchBar.dispatchEvent(new Event('change', { bubbles: true }));
-                        await new Promise(resolve => setTimeout(resolve, 1000));
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    const newSearchBar = document.querySelector('input[placeholder="Search"]');
+                    if (newSearchBar) {
+                        newSearchBar.value = tokenConfig.address;
+                        newSearchBar.dispatchEvent(new Event('input', { bubbles: true }));
+                        newSearchBar.dispatchEvent(new Event('change', { bubbles: true }));
+                        await new Promise(resolve => setTimeout(resolve, 1500));
                     }
                 }
             }
-            console.error(`${lh} - Failed to find or select ${tokenName} option after ${maxAttempts} attempts.`);
-            notifyUser('Pond0x Warning', `${tokenName} option not found or not selectable after multiple attempts.`);
+            console.error(`${lh} - Failed to select ${tokenName} after ${maxAttempts} attempts.`);
+            notifyUser('Pond0x Warning', `Failed to select ${tokenName}.`);
             updateLog(`Failed: ${tokenName}`);
             return false;
         };
@@ -3387,83 +3392,39 @@ async function setupTokensAndAmount() {
             isSettingUp = false;
             return false;
         }
-        await new Promise(resolve => setTimeout(resolve, 500));
-
-        const buyDropdown = dropdowns[1];
-        if (!buyDropdown || buyDropdown.offsetWidth === 0 || buyDropdown.offsetHeight === 0) {
-            console.error(`${lh} - Bottom dropdown not found or not visible after retries.`);
-            notifyUser('Pond0x Warning', 'Buy dropdown not found after retries.');
-            updateLog('Buy dropdown missing');
-            isSettingUp = false;
-            return false;
-        }
-        console.log(`${lh} - Clicking bottom dropdown for ${buyToken.name}...`);
-        updateLog(`Buy: ${buyToken.name}`);
-        buyDropdown.click();
-        await new Promise(resolve => setTimeout(resolve, 500));
-
-        let searchBar = document.querySelector('input[placeholder="Search"]');
-        if (!searchBar) {
-            console.error(`${lh} - Search bar not found for ${buyToken.name}.`);
-            notifyUser('Pond0x Warning', `Search bar not found for ${buyToken.name}.`);
-            updateLog('Search bar missing');
-            isSettingUp = false;
-            return false;
-        }
-        console.log(`${lh} - Found search bar, inputting ${buyToken.name} address...`);
-        searchBar.focus();
-        searchBar.value = '';
-        await new Promise(resolve => setTimeout(resolve, 200));
-        searchBar.value = buyToken.address;
-        searchBar.dispatchEvent(new Event('input', { bubbles: true }));
-        searchBar.dispatchEvent(new Event('change', { bubbles: true }));
         await new Promise(resolve => setTimeout(resolve, 1000));
 
-        let buySelectionSuccess = false;
-        for (let retry = 0; retry < 4; retry++) {
-            console.log(`${lh} - Attempt ${retry + 1} to select Buy token ${buyToken.name}...`);
-            if (await selectTokenOption(buyToken.name, false)) {
-                buySelectionSuccess = true;
-                break;
-            }
-            console.warn(`${lh} - Buy token ${buyToken.name} selection failed on attempt ${retry + 1}, retrying...`);
-            await new Promise(resolve => setTimeout(resolve, 1000 + (retry * 500)));
-            buyDropdown.click();
-            await new Promise(resolve => setTimeout(resolve, 500));
-            searchBar = document.querySelector('input[placeholder="Search"]');
-            if (searchBar) {
-                searchBar.value = buyToken.address;
-                searchBar.dispatchEvent(new Event('input', { bubbles: true }));
-                searchBar.dispatchEvent(new Event('change', { bubbles: true }));
-                await new Promise(resolve => setTimeout(resolve, 1000));
-            }
-        }
-        if (!buySelectionSuccess) {
-            console.error(`${lh} - Failed to select Buy token ${buyToken.name} after multiple retries.`);
-            notifyUser('Pond0x Warning', `Failed to select Buy token ${buyToken.name} after multiple retries.`);
-            updateLog(`Failed: ${buyToken.name}`);
+        console.log(`${lh} - Setting up Buy token ${buyToken.name}...`);
+        if (!(await selectTokenOption(buyToken.name, false))) {
+            console.error(`${lh} - Failed to set up Buy token ${buyToken.name}.`);
             isSettingUp = false;
             return false;
         }
 
-        const selectedBuy = document.querySelector(`button.py.rounded-full.flex.items-center img[alt*="${buyToken.name}"]`) ||
-                           Array.from(document.querySelectorAll(`button.rounded-full.flex.items-center ${buyToken.descriptionSelector}`)).find(p => p.textContent.trim() === buyToken.descriptionText)?.closest('button') ||
-                           Array.from(document.querySelectorAll(`button.rounded-full.flex.items-center p.text-xs.text-left`)).find(p => p.textContent.trim() === buyToken.descriptionText)?.closest('button');
-        if (!selectedBuy) {
-            console.error(`${lh} - ${buyToken.name} not confirmed as selected after click.`);
+        // Final confirmation for Buy token
+        const buyDropdown = dropdowns[1];
+        const textContent = buyDropdown.textContent.trim().toLowerCase();
+        const dropdownHTML = buyDropdown.outerHTML;
+        console.log(`${lh} - Final Buy token confirmation: Text="${textContent}", HTML=${dropdownHTML.slice(0, 100)}`);
+        const isBuySelected = textContent.includes(buyToken.name.toLowerCase()) ||
+            (buyToken.descriptionText && textContent.includes(buyToken.descriptionText.toLowerCase())) ||
+            dropdownHTML.includes(buyToken.address) ||
+            (buyToken.name === 'SOL' && textContent.includes('wrapped sol'));
+        if (!isBuySelected) {
+            console.error(`${lh} - ${buyToken.name} not confirmed as selected after setup.`);
             notifyUser('Pond0x Warning', `${buyToken.name} not confirmed as selected.`);
             updateLog(`${buyToken.name} not confirmed`);
             isSettingUp = false;
             return false;
         }
-        console.log(`${lh} - ${buyToken.name} confirmed as selected.`);
+
         isSettingUp = false;
-        console.log(`${lh} - Completed setupTokensAndAmount successfully.`);
-        updateLog('Ready to swap');
+        console.log(`${lh} - Token setup completed successfully.`);
+        updateLog('Tokens set');
         return true;
     } catch (error) {
-        console.error(`${lh} - Error in setupTokensAndAmount at ${new Date().toISOString()}:`, error);
-        notifyUser('Pond0x Error', `Error during token setup: ${error.message}`);
+        console.error(`${lh} - Error in setupTokensAndAmount:`, error);
+        notifyUser('Pond0x Error', `Token setup error: ${error.message}`);
         updateLog(`Error: ${error.message}`);
         isSettingUp = false;
         return false;
