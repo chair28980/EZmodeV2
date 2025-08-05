@@ -27,7 +27,7 @@
   - **One-way Swaps**: Swaps your chosen sell token into the buy token until sell token no longer has funds to cover the set swap value.
   - **Two-way Swaps**: Swaps will be made alternating your sell and buy tokens in a swap cycle creating a loop until one or the other no longer has funds to cover the set swap value. (example of one swap cycle: usdc>sol then sol> usdc). To do this the extension will scrub the buy amount displayed and use it as the sell amount after inputting the bought token as the new sell. Every swap cycle begins with the users predefined swap value.
 - **Custom Pricing**: Preloaded at 0.01 this box allows you to set the sell amount (Important: This is not a value it is a count of the token being sold). No commas are needed to define larger numbers (Example: 1,000 should be entered as 1000). A single period is used to define smaller than 1 values (example 0.1).
-- **Swaps Completed**: Counts the number of swaps completed by EzModeV2. Resets to 0 once the browser is closed. (Important: this is not your Swap Manifest Count!)
+- **Swaps Completed**: Counts the number of swaps completed by EzmodeV2. Resets to 0 once the browser is closed. (Important: this is not your Swap Manifest Count!)
 - **Swap Frequency**: Adjust how often swaps occur (default: every 1 seconds).
 - **Token Pair Selection**: Choose your sell and buy tokens (Preloaded options: USDC, SOL, wPOND, USDT, hSOL, PepeonSOL & wBTC) with an easy dropdown interface. Simply choose your pair and click the Update button to automatically load the Pond0x UI with your choices.
 - **New Token Input**: You can add your own Solana tokens. Simply type in the token name and then the contract address in the defined boxes and click add. This will permanetly add the token to the selectable tokens in the sell and buy dropdowns.
@@ -43,7 +43,7 @@
 ## Installation
 
 ### Prerequisites
-- **Google Chromium Browser**: Ez Mode is a Chrome extension and requires Google Chrome,Brave,Firefox,Edge to function.
+- **Google Chromium Browser**: EzmodeV2 is a Chrome extension and requires Google Chrome,Brave,Firefox,Edge to function.
 - **Pond0x Account**: You need an active Pond0x account and a connected wallet (e.g., Phantom) to interact with the mining and swapping features.
 -  **Wallet interation**: Note the extension does not connect to or interact with your wallet in any way. It does not create any non native Pond0x signatures or need your private key or seed phrase to function. 
 
