@@ -58,13 +58,13 @@
 1. **Load the Extension in Chrome**:
 - Open Chrome and go to `chrome://extensions/`.
 - Enable “Developer mode” (toggle in the top-right corner).
-- Click “Load unpacked” and select the `ez-mode` folder you cloned.
+- Click “Load unpacked” and select the `EzmodeV2` folder you cloned.
 
 -Alternativley you can clone the repository
 
 **Clone the Repository**:
-    git clone https://github.com/[your-username]/ez-mode.git
-   cd ez-mode
+    git clone https://github.com/[your-username]/EzmodeV2.git
+   cd EzmodeV2
 
 - Open Chrome and go to `chrome://extensions/`.
 - Enable “Developer mode” (toggle in the top-right corner).
