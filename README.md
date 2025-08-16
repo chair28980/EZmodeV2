@@ -1,6 +1,9 @@
-# EzmodeV2 - Pond0x Automation Extension
+<h1 align="center"># EzmodeV2 - Pond0x Automation Extension</h1>
 
-🪷 🤝 ⛏️ 💎
+<div align="center">
+  <img src="icon128.png" alt="Logo">
+<h2>🪷 🤝 ⛏️ 💎</h2>
+</div>
 
 **EzmodeV2** is a browser extension designed to automate some participation activities on [Pond0x](https://www.pond0x.com/). With version 4.2.0.694, this extension provides a seamless experience for users looking to optimize their mining and swapping operations with minimal manual intervention. Featuring a user-friendly control panel, detailed status tracking, and smart automation features, EzmodeV2 is your go-to tool for efficient Pond0x interactions.
 
@@ -55,13 +58,13 @@
 1. **Load the Extension in Chrome**:
 - Open Chrome and go to `chrome://extensions/`.
 - Enable “Developer mode” (toggle in the top-right corner).
-- Click “Load unpacked” and select the `ez-mode` folder you cloned.
+- Click “Load unpacked” and select the `EzmodeV2` folder you cloned.
 
 -Alternativley you can clone the repository
 
 **Clone the Repository**:
-    git clone https://github.com/[your-username]/ez-mode.git
-   cd ez-mode
+    git clone https://github.com/[your-username]/EzmodeV2.git
+   cd EzmodeV2
 
 - Open Chrome and go to `chrome://extensions/`.
 - Enable “Developer mode” (toggle in the top-right corner).
